@@ -227,10 +227,10 @@ ax.legend()
 ax.set_ylim(0.0,30)
 #ax.set_xlim(0.0,100)
 plt.grid()
-plt.show()
-#graphname=filename+'Graph.pdf'
-#fig.savefig(graphname)   # save the figure to file
-#plt.close(fig)  
+#plt.show()
+graphname='Graph.pdf'
+fig.savefig(graphname)   # save the figure to file
+plt.close(fig)  
 
 import matplotlib.animation as animation
 
@@ -290,12 +290,12 @@ if title_text != None:
     ax.set_title(title_text)
 
 ani = animation.FuncAnimation(fig, animate, 100, interval=50, blit=False)
-plt.show()
+#plt.show()
 
 f = r"farfieldanimation.gif" 
 writergif = animation.PillowWriter(fps=5) 
 ani.save(f, writer=writergif)
-
+plt.close()
 #Rendering
 receive_point_spread=0.1*wavelength
 receive_aperture_height=wavelength*8
@@ -319,4 +319,8 @@ sink_cords[:,2]=seperation_distance
 sink_normals[:,2]=-1.0
 sink_points.points=o3d.utility.Vector3dVector(sink_cords)
 sink_points.normals=o3d.utility.Vector3dVector(sink_normals)
-o3d.visualization.draw([sink_points,horn_antenna.export_all_points()]+horn_antenna.export_all_structures())
+#o3d.visualization.draw([sink_points,horn_antenna.export_all_points()]+horn_antenna.export_all_structures())
+for a, pointstuff in enumerate([sink_points,horn_antenna.export_all_points()]):
+    o3d.io.write_point_cloud('lem_pointclouds{}.pcd'.format(a),pointstuff)
+for a, meshstuff in enumerate(horn_antenna.export_all_structures()):
+    o3d.io.write_triangle_mesh('lem_meshes{}.ply'.format(a),meshstuff)
