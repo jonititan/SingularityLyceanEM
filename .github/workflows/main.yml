@@ -36,11 +36,9 @@ jobs:
           draft: false
           prerelease: false
       - uses: eWaterCycle/setup-singularity@v7
-        if: ${{ env.release_tag != env.latest_tag }}
         with:
           singularity-version: 3.8.3
       - name: Build the singularity container
-        if: ${{ env.release_tag != env.latest_tag }}
         run: |
             repo=$(echo "${GITHUB_REPOSITORY/\//-}")
 
@@ -50,11 +48,4 @@ jobs:
             else
                 echo "There was an issue building lem.sif."          
             fi
-      - name: Upload Release Assets
-        if: ${{ env.release_tag != env.latest_tag }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          tag_name: ${{ env.release_tag }}
-        run: |
-          hub release edit $(find . -type f -name "*.sif" -printf "-a %p ") -m "" "$tag_name" 
+      
