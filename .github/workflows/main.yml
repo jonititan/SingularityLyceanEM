@@ -12,10 +12,11 @@ jobs:
       - uses: eWaterCycle/setup-singularity@v7
         with:
           singularity-version: 3.8.3
-      - name: Build the singularity container
+      - name: List files in the repository
         run: |
-            repo=$(echo "${GITHUB_REPOSITORY/\//-}")
-
+          ls ${{ github.workspace }}
+      - name: Build the singularity container
+        run: 
             singularity build --fakeroot lem.sif lyceanem.def
             if [ "$?" == "0" ]; then
                 echo "Successfully built container lem.sif."                
