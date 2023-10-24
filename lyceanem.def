@@ -5,24 +5,41 @@ From: nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
     MAINTAINER "Jonathan Pelham, j.g.pelham@cranfield.ac.uk"
 
 %environment
-    export DEFAULTHOME=/headless 
-
-%files
-    ./src/. /headless/src/
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+    export NUMBA_CUDA_ENABLE_MINOR_VERSION_COMPATIBILITY=1
     
 
 %post
-export DEFAULTHOME=/headless 
-
-echo $DEFAULTHOME
-ls $DEFAULTHOME/src
-find $DEFAULTHOME/src -name '*.sh' -exec chmod a+x {} +
-
 ### Install common tools
-$DEFAULTHOME/src/tools.sh
+apt-get update && apt-get install --no-install-recommends -y \
+    libegl1 \
+    libgl1 \
+    libgomp1 \
+    git \
+    python3-pip \
+    wget \
+    && apt-get clean all \
+    && rm -rf /var/lib/apt/lists/*
 
 ### Install opend3d
-$DEFAULTHOME/src/open3dinstall.sh
+echo "Installing Open3D"
+pip3 install -U pip>=20.3 setuptools importlib-resources
+pip3 install open3d pyvista scikit-learn pandas geopandas
 
 ### Install lyceanem
-$DEFAULTHOME/src/lyceaneminstall.sh
+echo "Installing LyceanEM"
+#echo "Installing Cupy"
+pip3 install cupy-cuda11x
+#echo "Installing cunn"
+python3 -m cupyx.tools.install_library --cuda 11.x --library cutensor
+#echo "Installing CUDA mvc"
+# https://numba.readthedocs.io/en/stable/cuda/minor_version_compatibility.html
+pip3 install ptxcompiler-cu11 cubinlinker-cu11 --extra-index-url=https://pypi.nvidia.com
+#echo "Installing Numba"
+pip3 install numba
+#echo "Installing LyceanEM finally"
+pip3 install git+https://github.com/LyceanEM/LyceanEM-Python.git#egg=lyceanem
+
+
+%runscript
+    exec /bin/bash -c "python3 $@"

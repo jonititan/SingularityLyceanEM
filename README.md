@@ -7,7 +7,7 @@ https://documentation.lyceanem.com/en/stable/design.html
 
 To build the singularity image
 ```
-  $ sudo singularity build lem.sif lyceanem.def
+  $ sudo singularity build --nv lem.sif lyceanem.def
 ```
 
 To run the image with Nvidia GPU passthrough and run a script from local folder
