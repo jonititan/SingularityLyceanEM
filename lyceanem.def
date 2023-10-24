@@ -24,7 +24,7 @@ apt-get update && apt-get install --no-install-recommends -y \
 ### Install opend3d
 echo "Installing Open3D"
 pip3 install -U pip>=20.3 setuptools importlib-resources
-pip3 install open3d pyvista scikit-learn pandas geopandas
+pip3 install open3d pyvista scikit-learn pandas geopandas folium
 
 ### Install lyceanem
 echo "Installing LyceanEM"
